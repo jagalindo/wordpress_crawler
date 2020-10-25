@@ -4,3 +4,4 @@ env/
 lib*
 share/
 pyenv.cfg
+pyvenv.cfg
