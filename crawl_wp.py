@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 import json   
 
-def processPlugin(plugin_name):
+def get_plugin_properties(plugin_name):
     properties=dict()
 
     browser.get("https://wordpress.org/plugins/" + plugin_name)
@@ -56,16 +56,41 @@ def processPlugin(plugin_name):
     properties["Score"]=str(total_stars)
     return(properties)
 
-def processPluginsListPage(page_num):
+def get_plugin_reviews(plugin_name,page_num):
+    browser.get("https://wordpress.org/support/plugin/"+plugin_name+"/reviews/page/" + str(page_num))
+    results=[]
+    container=browser.find_element_by_class_name("bbp-body")
+    uls = container.find_elements_by_xpath('.//ul')
+    for ul in uls :
+        comment=dict()
+        link=ul.find_element_by_class_name("bbp-author-name").text
+        comment["autor"]=link
+        review=ul.find_element_by_class_name("bbp-topic-permalink").text
+        comment["review"]=review
+        stars=ul.find_element_by_class_name("wporg-ratings").get_attribute('title')
+        comment["stars"]=stars
+        date=ul.find_element_by_class_name('bbp-topic-freshness').find_element_by_tag_name('a').get_attribute('title')
+        comment["date"]=date
+        results.append(comment)
+    return results
 
-    browser.get("https://wordpress.org/plugins/browse/popular/page/" + str(page_num))
+def get_plugin_reviews_pages(plugin_name):
+    browser.get("https://wordpress.org/support/plugin/"+plugin_name+"/reviews/page/1")
+    return(int(browser.find_elements_by_class_name('page-numbers')[-2].text))
+
+
+def get_plugins_per_cat(cat,page_num):
+
+    browser.get("https://wordpress.org/plugins/browse/"+cat+"/page/" + str(page_num))
     plugins = browser.find_elements_by_tag_name('article')
+    plugins_names=[]
     for plugin in plugins:
         entry = plugin.find_element_by_class_name('entry-header')
         a_entry = entry.find_element_by_tag_name('a')
-        print(a_entry.get_attribute('href'))
+        plugins_names.append(a_entry.get_attribute('href'))
+    return plugins_names
 
-def getPluginsMaxPages():
+def get_plugins_per_cat_pages():
     browser.get("https://wordpress.org/plugins/browse/popular/page/1" )
     return(int(browser.find_elements_by_class_name('page-numbers')[-2].text))
 
@@ -86,6 +111,8 @@ chrome_options.add_argument("--headless")
 # chrome_options.headless = True # also works
 browser = webdriver.Chrome(options=chrome_options)
 
-print(json.dumps(processPlugin("leadin")))
+#print(json.dumps(processPlugin("leadin")))
 #processPluginsListPage(1)
 #print(getPluginsMaxPages())
+#processReviewPage('leadin',1)
+print(get_plugin_reviews_pages('leadin'))

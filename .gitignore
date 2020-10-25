@@ -1,0 +1,6 @@
+.vscode
+bin/
+env/
+lib*
+share/
+pyenv.cfg
