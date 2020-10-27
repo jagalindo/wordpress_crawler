@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 import json, random,time
 
-def get_plugin_properties(plugin_name):
+def get_plugin_properties(plugin_name,browser):
     properties=dict()
 
     browser.get("https://wordpress.org/plugins/" + plugin_name)
@@ -56,7 +56,7 @@ def get_plugin_properties(plugin_name):
     properties["Score"]=str(total_stars)
     return(properties)
 
-def get_plugin_reviews(plugin_name,page_num):
+def get_plugin_reviews(plugin_name,page_num,browser):
     browser.get("https://wordpress.org/support/plugin/"+plugin_name+"/reviews/page/" + str(page_num))
     results=[]
     container=browser.find_element_by_class_name("bbp-body")
@@ -78,12 +78,12 @@ def get_plugin_reviews(plugin_name,page_num):
         results.append(comment)
     return results
 
-def get_plugin_reviews_pages(plugin_name):
+def get_plugin_reviews_pages(plugin_name,browser):
     browser.get("https://wodpress.org/support/plugin/"+plugin_name+"/reviews/page/1")
     return(int(browser.find_elements_by_class_name('page-numbers')[-2].text))
 
 
-def get_plugins_per_cat(cat,page_num):
+def get_plugins_per_cat(cat,page_num,browser):
 
     browser.get("https://wordpress.org/plugins/browse/"+cat+"/page/" + str(page_num))
     plugins = browser.find_elements_by_tag_name('article')
@@ -94,50 +94,80 @@ def get_plugins_per_cat(cat,page_num):
         plugins_names.append(a_entry.get_attribute('href').replace("https://wordpress.org/plugins/","").replace("/",""))
     return plugins_names
 
-def get_plugins_per_cat_pages(cat):
+def get_plugins_per_cat_pages(cat,browser):
     browser.get("https://wordpress.org/plugins/browse/"+cat+"/page/1" )
     return(int(browser.find_elements_by_class_name('page-numbers')[-2].text))
 
 #--------------------------------------------------------------
 #--------------------------------------------------------------
 def get_all_popular_plugins():
-    maxpags=get_plugins_per_cat_pages('popular')
-    allplugins=[]
-    for i in range(1):
-        time.sleep(random.randint(1,20))
-        allplugins.extend(get_plugins_per_cat('popular',i))
+    browser=getRandomBrowser()
     
+    maxpags=get_plugins_per_cat_pages('popular',browser)
+    allplugins=[]
+    for i in range(1,2):
+#        browser=getRandomBrowser()
+        allplugins.extend(get_plugins_per_cat('popular',i,browser))
+#    browser.close()
     result=dict()
     for plugin in allplugins:
-        time.sleep(random.randint(1,20))
-        plugin_data=get_plugin_properties(plugin)
-        max_rev_pages=get_plugin_reviews_pages(plugin)
-        review_data=[]
-        for j in range(1):
-            time.sleep(random.randint(1,20))
-            review_data.extend(get_plugin_reviews(plugin,j))
-        plugin_data['reviews']=review_data
+#        browser=getRandomBrowser()
+        plugin_data=get_plugin_properties(plugin,browser)
+#        browser.close()
+ 
+#        browser=getRandomBrowser()
+#        max_rev_pages=get_plugin_reviews_pages(plugin,browser)
+#        browser.close()
+
+#        review_data=[]
+#        for j in range(1,2):
+#            browser=getRandomBrowser()
+#            review_data.extend(get_plugin_reviews(plugin,j,browser))
+#            browser.close()
+
+#        plugin_data['reviews']=review_data
         result[plugin]=plugin_data
-    return plugin
+        
+    return result
 #--------------------------------------------------------------
 # Starting the actual program
 #--------------------------------------------------------------
 #--------------------------------------------------------------
 #--------------------------------------------------------------
+def getRandomBrowser():
+
+    chrome_options = Options()  
+    #chrome_options.add_argument("--disable-extensions")
+    #chrome_options.add_argument("--disable-gpu")
+    #chrome_options.add_argument("--no-sandbox") # linux only
+    #chrome_options.add_argument("--headless")
+    # chrome_options.headless = True # also works
+
+    PROXY = proxies[random.randint(0,len(proxies))].get_address()
+    webdriver.DesiredCapabilities.CHROME['proxy']={
+        "httpProxy":PROXY,
+        "ftpProxy":PROXY,
+        "sslProxy":PROXY,
+        "proxyType":"MANUAL",
+        'trustAllServers':'true'
+    }
+    browser = webdriver.Chrome(options=chrome_options)
+    return browser
+
+from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
+req_proxy = RequestProxy() #you may get different number of proxy when  you run this at each time
+proxies = req_proxy.get_proxy_list() #this will create proxy list
+sp = [] #int is list of Indian proxy
+for proxy in proxies:
+    if proxy.country == 'Spain':
+        sp.append(proxy)
+print(len(sp))
+proxies=sp
+
+
 browser_categories=["popular","blocks","featured","beta"]
-
-chrome_options = Options()  
-#chrome_options.add_argument("--disable-extensions")
-#chrome_options.add_argument("--disable-gpu")
-#chrome_options.add_argument("--no-sandbox") # linux only
-chrome_options.add_argument("--headless")
-# chrome_options.headless = True # also works
-browser = webdriver.Chrome(options=chrome_options)
-
-#print(json.dumps(processPlugin("leadin")))
-#processPluginsListPage(1)
-#print(getPluginsMaxPages())
-#processReviewPage('leadin',1)
-#print(get_plugin_reviews_pages('leadin'))
+data=get_all_popular_plugins()
+json_data=json.dumps(data)
+print(json_data)
 with open('pluggins.json', 'w') as f:
-    json.dumps(get_all_popular_plugins(),f,sort_keys=True, indent=4)
+    json.dump(json_data,f)
