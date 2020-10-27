@@ -79,13 +79,13 @@ def get_plugin_reviews(plugin_name,page_num,browser):
     return results
 
 def get_plugin_reviews_pages(plugin_name,browser):
-    browser.get("https://wodpress.org/support/plugin/"+plugin_name+"/reviews/page/1")
+    browser.get("https://wodpress.org/support/plugin/"+plugin_name+"/reviews/")
     return(int(browser.find_elements_by_class_name('page-numbers')[-2].text))
 
 
 def get_plugins_per_cat(cat,page_num,browser):
 
-    browser.get("https://wordpress.org/plugins/browse/"+cat+"/page/" + str(page_num))
+    browser.get("https://wordpress.org/plugins/browse/"+cat+"/page/" + str(page_num)+"/")
     plugins = browser.find_elements_by_tag_name('article')
     plugins_names=[]
     for plugin in plugins:
@@ -106,26 +106,17 @@ def get_all_popular_plugins():
     maxpags=get_plugins_per_cat_pages('popular',browser)
     allplugins=[]
     for i in range(1,2):
-#        browser=getRandomBrowser()
         allplugins.extend(get_plugins_per_cat('popular',i,browser))
-#    browser.close()
     result=dict()
     for plugin in allplugins:
-#        browser=getRandomBrowser()
         plugin_data=get_plugin_properties(plugin,browser)
-#        browser.close()
- 
-#        browser=getRandomBrowser()
-#        max_rev_pages=get_plugin_reviews_pages(plugin,browser)
-#        browser.close()
+        #max_rev_pages=get_plugin_reviews_pages(plugin,browser)
+        review_data=[]
+        for j in range(1,2):
+            #time.sleep(10)
+            review_data.extend(get_plugin_reviews(plugin,j,browser))
 
-#        review_data=[]
-#        for j in range(1,2):
-#            browser=getRandomBrowser()
-#            review_data.extend(get_plugin_reviews(plugin,j,browser))
-#            browser.close()
-
-#        plugin_data['reviews']=review_data
+        plugin_data['reviews']=review_data
         result[plugin]=plugin_data
         
     return result
@@ -140,7 +131,7 @@ def getRandomBrowser():
     #chrome_options.add_argument("--disable-extensions")
     #chrome_options.add_argument("--disable-gpu")
     #chrome_options.add_argument("--no-sandbox") # linux only
-    #chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     # chrome_options.headless = True # also works
 
     PROXY = proxies[random.randint(0,len(proxies))].get_address()
