@@ -135,10 +135,10 @@ def getRandomBrowser():
     chrome_options = Options()  
     #chrome_options.add_argument("--disable-extensions")
     #chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox") # linux only
+    #chrome_options.add_argument("--no-sandbox") # linux only
     chrome_options.add_argument("--headless")
     # chrome_options.headless = True # also works
-    chrome_options.add_argument("--log-path=/dev/null")
+    #chrome_options.add_argument("--log-path=/dev/null")
     PROXY = proxies[random.randint(0,len(proxies))].get_address()
     webdriver.DesiredCapabilities.CHROME['proxy']={
         "httpProxy":PROXY,
@@ -150,6 +150,7 @@ def getRandomBrowser():
     }
     browser = webdriver.Chrome(options=chrome_options)
     return browser
+
 logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING)
 from selenium.webdriver.remote.remote_connection import LOGGER
 LOGGER.setLevel(logging.WARNING)
