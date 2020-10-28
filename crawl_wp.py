@@ -114,6 +114,7 @@ def get_all_popular_plugins():
         allplugins.extend(get_plugins_per_cat('popular',i,browser))
     result=dict()
     for plugin in allplugins:
+        print(plugin)
         plugin_data=get_plugin_properties(plugin,browser)
         max_rev_pages=get_plugin_reviews_pages(plugin,browser)
         review_data=[]
