@@ -2,14 +2,18 @@ dist: xenial
 language: python
 python:
 - '3.6'
-sources:
-- google-chrome
-packages:
-- google-chrome-stable
+addons:
+  chrome: stable
+  apt:
+    packages:
+      - chromium-chromedriver
+
 install:
 - pip install -r requirements.txt
-- wget https://chromedriver.storage.googleapis.com/86.0.4240.22/chromedriver_linux64.zip
-- unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python3.6.2/bin/
+
+before_script:
+- ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
+
 script:
 - python3 ./crawl_wpgit .py
 - git config --global user.email "jagalindo@us.es"
