@@ -79,8 +79,12 @@ def get_plugin_reviews(plugin_name,page_num,browser):
     return results
 
 def get_plugin_reviews_pages(plugin_name,browser):
-    browser.get("https://wordpress.org/support/plugin/"+plugin_name+"/reviews/")
-    return(int(browser.find_elements_by_class_name('page-numbers')[-2].text))
+    browser.get("https://wodpress.org/support/plugin/"+plugin_name+"/reviews/")
+    try:
+        pages=int(browser.find_elements_by_class_name('page-numbers')[-2].text)
+    except NoSuchElementException:
+        pages=1
+    return(pages)
 
 
 def get_plugins_per_cat(cat,page_num,browser):
