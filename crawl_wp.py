@@ -138,14 +138,15 @@ def getRandomBrowser():
     #chrome_options.add_argument("--no-sandbox") # linux only
     chrome_options.add_argument("--headless")
     # chrome_options.headless = True # also works
-
+    chrome_options.add_argument("--log-path=/dev/null")
     PROXY = proxies[random.randint(0,len(proxies))].get_address()
     webdriver.DesiredCapabilities.CHROME['proxy']={
         "httpProxy":PROXY,
         "ftpProxy":PROXY,
         "sslProxy":PROXY,
         "proxyType":"MANUAL",
-        'trustAllServers':'true'
+        'trustAllServers':'true',
+        
     }
     browser = webdriver.Chrome(options=chrome_options)
     return browser
