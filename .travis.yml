@@ -15,7 +15,7 @@ before_script:
 - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
 
 script:
-- python3 ./crawl_wpgit .py
+- python3 ./crawl_wp.py
 - git config --global user.email "jagalindo@us.es"
 - git config --global user.name "Travis CI"
 - git checkout main
