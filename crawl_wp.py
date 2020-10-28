@@ -79,7 +79,7 @@ def get_plugin_reviews(plugin_name,page_num,browser):
     return results
 
 def get_plugin_reviews_pages(plugin_name,browser):
-    browser.get("https://wodpress.org/support/plugin/"+plugin_name+"/reviews/")
+    browser.get("https://wordpress.org/support/plugin/"+plugin_name+"/reviews/")
     try:
         pages=int(browser.find_elements_by_class_name('page-numbers')[-2].text)
     except NoSuchElementException:
@@ -163,6 +163,14 @@ proxies=sp
 browser_categories=["popular","blocks","featured","beta"]
 data=get_all_popular_plugins()
 json_data=json.dumps(data)
-print(json_data)
-with open('pluggins.json', 'w') as f:
+
+current_date_and_time = datetime.datetime.now()
+current_date_and_time_string = str(current_date_and_time)
+extension = ".json"
+
+file_name =  current_date_and_time_string + extension
+
+with open(file_name, 'w') as f:
     json.dump(json_data,f)
+
+f.close()
