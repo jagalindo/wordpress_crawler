@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
-import json, random,time
+import json, random,time,datetime
 
 def get_plugin_properties(plugin_name,browser):
     properties=dict()
