@@ -79,7 +79,7 @@ def get_plugin_reviews(plugin_name,page_num,browser):
     return results
 
 def get_plugin_reviews_pages(plugin_name,browser):
-    browser.get("https://wodpress.org/support/plugin/"+plugin_name+"/reviews/")
+    browser.get("https://wordpress.org/support/plugin/"+plugin_name+"/reviews/")
     return(int(browser.find_elements_by_class_name('page-numbers')[-2].text))
 
 
@@ -105,14 +105,14 @@ def get_all_popular_plugins():
     
     maxpags=get_plugins_per_cat_pages('popular',browser)
     allplugins=[]
-    for i in range(1,2):
+    for i in range(1,maxpags):
         allplugins.extend(get_plugins_per_cat('popular',i,browser))
     result=dict()
     for plugin in allplugins:
         plugin_data=get_plugin_properties(plugin,browser)
-        #max_rev_pages=get_plugin_reviews_pages(plugin,browser)
+        max_rev_pages=get_plugin_reviews_pages(plugin,browser)
         review_data=[]
-        for j in range(1,2):
+        for j in range(1,max_rev_pages):
             #time.sleep(10)
             review_data.extend(get_plugin_reviews(plugin,j,browser))
 
