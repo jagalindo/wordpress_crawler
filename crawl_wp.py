@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
+from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
 import json, random,time,datetime
 
 def get_plugin_properties(plugin_name,browser):
@@ -149,7 +150,6 @@ def getRandomBrowser():
     browser = webdriver.Chrome(options=chrome_options)
     return browser
 
-from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
 req_proxy = RequestProxy() #you may get different number of proxy when  you run this at each time
 proxies = req_proxy.get_proxy_list() #this will create proxy list
 sp = [] #int is list of Indian proxy
