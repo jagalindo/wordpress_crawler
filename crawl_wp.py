@@ -156,9 +156,9 @@ def getRandomBrowser():
     browser = webdriver.Chrome(options=chrome_options)
     return browser
 
-logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING)
-from selenium.webdriver.remote.remote_connection import LOGGER
-LOGGER.setLevel(logging.WARNING)
+#logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING)
+#from selenium.webdriver.remote.remote_connection import LOGGER
+#LOGGER.setLevel(logging.WARNING)
 
 req_proxy = RequestProxy() #you may get different number of proxy when  you run this at each time
 proxies = req_proxy.get_proxy_list() #this will create proxy list
