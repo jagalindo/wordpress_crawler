@@ -82,7 +82,11 @@ def get_plugin_reviews(plugin_name,page_num,browser):
 def get_plugin_reviews_pages(plugin_name,browser):
     browser.get("https://wordpress.org/support/plugin/"+plugin_name+"/reviews/")
     try:
-        pages=int(browser.find_elements_by_class_name('page-numbers')[-2].text)
+        pages_elements=browser.find_elements_by_class_name('page-numbers')
+        if len(pages_elements) > 2  :
+            pages = int(pages_elements[-2].text)
+        else :
+            pages = 1
     except NoSuchElementException:
         pages=1
     return(pages)
@@ -168,7 +172,7 @@ current_date_and_time = datetime.datetime.now()
 current_date_and_time_string = str(current_date_and_time)
 extension = ".json"
 
-file_name =  current_date_and_time_string + extension
+file_name = "./data/"+(current_date_and_time_string + extension).replace(" ",".")
 
 with open(file_name, 'w') as f:
     json.dump(json_data,f)
