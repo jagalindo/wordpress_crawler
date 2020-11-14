@@ -2,10 +2,20 @@ dist: xenial
 language: python
 python:
 - '3.6'
+addons:
+  chrome: stable
+  apt:
+    packages:
+      - chromium-chromedriver
+
 install:
 - pip install -r requirements.txt
+
+before_script:
+- ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
+
 script:
-- python3 ./splot-crawl.py
+- python3 ./crawl_wp.py
 - git config --global user.email "jagalindo@us.es"
 - git config --global user.name "Travis CI"
 - git checkout main

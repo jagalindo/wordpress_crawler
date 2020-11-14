@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
 import json, random,time,datetime
-
+import logging
 def get_plugin_properties(plugin_name,browser):
     properties=dict()
 
@@ -118,6 +118,7 @@ def get_all_popular_plugins():
         allplugins.extend(get_plugins_per_cat('popular',i,browser))
     result=dict()
     for plugin in allplugins:
+        print(plugin)
         plugin_data=get_plugin_properties(plugin,browser)
         max_rev_pages=get_plugin_reviews_pages(plugin,browser)
         review_data=[]
@@ -142,17 +143,22 @@ def getRandomBrowser():
     #chrome_options.add_argument("--no-sandbox") # linux only
     chrome_options.add_argument("--headless")
     # chrome_options.headless = True # also works
-
+    #chrome_options.add_argument("--log-path=/dev/null")
     PROXY = proxies[random.randint(0,len(proxies))].get_address()
     webdriver.DesiredCapabilities.CHROME['proxy']={
         "httpProxy":PROXY,
         "ftpProxy":PROXY,
         "sslProxy":PROXY,
         "proxyType":"MANUAL",
-        'trustAllServers':'true'
+        'trustAllServers':'true',
+        
     }
     browser = webdriver.Chrome(options=chrome_options)
     return browser
+
+logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING)
+from selenium.webdriver.remote.remote_connection import LOGGER
+LOGGER.setLevel(logging.WARNING)
 
 req_proxy = RequestProxy() #you may get different number of proxy when  you run this at each time
 proxies = req_proxy.get_proxy_list() #this will create proxy list
@@ -160,7 +166,6 @@ sp = [] #int is list of Indian proxy
 for proxy in proxies:
     if proxy.country == 'Spain':
         sp.append(proxy)
-print(len(sp))
 proxies=sp
 
 
